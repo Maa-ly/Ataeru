@@ -19,6 +19,8 @@ lib Errors{
     error AdminNotSet();
    error  AppointeeNotSet()
 
+   error AgentActivityAlreadyThat();
+
   
 
 }

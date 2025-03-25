@@ -23,6 +23,25 @@ lib Structs{
         SURROGATE
     }
 
+     struct HospitalRequest {
+    //    uint256 id;
+      // address hospitalAddress;
+        DonorType donorType;
+        string[] rules;
+        uint256 date;
+        uint256 time;
+        uint256 maxDonors;
+        uint256 minAmontpayment;
+        uint256 maxAmountPayment;
+        RequestStatus status;
+        string requestDescription;
+        bool isActive;
+    }
+    enum RequestStatus{
+        URGENT,
+        NORMAL
+    }
+
     struct UserInfo{
         string name;
         string email;
@@ -62,13 +81,14 @@ lib Structs{
     string nameOfAgent;
     string description;
     uint256 nftId;
-    bool isDeployedAgent;
+  //  bool isDeployedAgent;
     ActivityConfinment activity;
     AgentStatus status;
    }
    enum AgentStatus{
        PENDING,
-       DEPLOYED
+       DEPLOYED,
+       CANCELLED
    }
 
    enum ActivityConfinment{

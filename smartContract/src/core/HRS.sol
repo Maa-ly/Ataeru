@@ -10,6 +10,15 @@ contract HRC {
 
  function cancelBooking() public {}
 
- function hospitalContractRequest() public {}
+ function hospitalContractRequest() public {} // will remove and make a request contract
+
+  function _addDonorToSet() public {}
+
+ function _addUserToSet() public {}
+
+ function getsetDonor() public view returns() {}
+
+ function getsetUser() public {}
+
 
 }

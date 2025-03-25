@@ -5,9 +5,9 @@ import{Structs} from "./dataTypes/structs.sol";
 
 contract EntryPoint{
 
-Structs.DonorInfo[] public donors;
-Structs.UserInfo[] public users;
-Structs.HospitalInfo[] public hospitals;
+Structs.DonorInfo public donors;
+Structs.UserInfo public users;
+Structs.HospitalInfo public hospitals;
 
     function registerDonor() public {
         //TODO
@@ -34,15 +34,9 @@ Structs.HospitalInfo[] public hospitals;
 
  function updateUserInfomation() public {}
 
+
  function updateHospitalInfomation() public {}
 
 
- function _addDonorToSet() public {}
-
- function _addUserToSet() public {}
-
- function getsetDonor() public view returns() {}
-
- function getsetUser() public {}
 
 }
