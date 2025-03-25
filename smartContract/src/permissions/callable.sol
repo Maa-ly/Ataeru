@@ -104,6 +104,7 @@ contract Callable is Permissions, Errors{
         emit AppointeeRemoved(account, appointee, target, selector);
     }
 
+
     /**
      *
      *                         INTERNAL FUNCTIONS

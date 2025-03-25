@@ -9,5 +9,6 @@ mapping(address => HospitalInfo) public hospitals;
 mapping(address => mapping(address => DonorSet)) public donorSets;
 mapping(address => mapping(address => UserSet)) public userSets;
 
-
+mapping(address mapping(address =>AgentInfo)) public agents; // maps the owner to the agent address to the agent info
+bool isAgent;
 }
