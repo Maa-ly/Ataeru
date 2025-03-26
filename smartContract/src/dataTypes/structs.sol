@@ -13,9 +13,10 @@ lib Structs{
         uint contact;
         string about;
         bytes32 witnessHash; // health document hash
-        bool isDonor;
+      
         DonorType donorType;
     }
+
 
     enum DonorType{
         SPERMDONOR,
@@ -49,11 +50,15 @@ lib Structs{
         uint contact;
         string about;
         bytes32 witnessHash; // health document hash
-        bool isUser;
-        bool isSurrogateReceiver;
-        bool isEggReceiver;
-        bool isSpermReceiver;
+        bool isUserRegistered;
+       ReceiverType receiverType;
     }
+
+    enum ReceiverType{
+        SPERMRECEIVER,
+        EGGRECEIVER,
+        SURROGATERECEIVER
+    }   
 
     struct HospitalInfo{
         string name;
