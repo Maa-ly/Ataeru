@@ -15,11 +15,11 @@ Building info for me
 
 HRS.sol
 
-HospitalRequestFactory
-
-EntryPoint
-
 verificationOfParties
+## process mech 
+### REputation mech
+
+### rewards mech
 
 
 ## help needed
