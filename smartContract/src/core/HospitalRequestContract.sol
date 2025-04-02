@@ -2,7 +2,8 @@
 pragma solidity 0.8.26;
 
 import "../src/dataTypes/structs.sol";
-contract HospitalRequestContract {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+contract HospitalRequestContract is Initializable {
 
 uint256 public id;
 address public hospitalAddress;
@@ -10,11 +11,12 @@ Structs.HospitalRequest public hospitalRequest;
 uint256 maxDonor;
 
 mapping(address => mapping(uint256 => HospitalRequest)) public hospitalRequests;
-constructor(address _hospitalAddress, uint256 _maxDonor) public {
+
+
+function initialize(address _hospitalAddress, uint256 _maxDonor) public initializer {
     hospitalAddress = _hospitalAddress;
     maxDonor = _maxDonor;
 }
-
 function makeADonorRequest( DonorType _donorType, string memory _rules, uint256 _date, uint256 _time, uint256 _maxDonor, uint256 _minAmount, uint256 _maxAmount, RequestStatus _status, string memory _des ) public returns(uint256 _id) {
 
 hospitalRequest = 

@@ -11,4 +11,10 @@ mapping(address => mapping(address => UserSet)) public userSets;
 
 mapping(address mapping(address =>AgentInfo)) public agents; // maps the owner to the agent address to the agent info
 bool isAgent;
+
+  bool isDonor;
+
+  mapping((address => bytes32) =>  mapping(bool => DonorInfo)) public is registeredDonor;
+
+  mapping(address => bytes32 => UserInfo) public registeredUser;
 }
