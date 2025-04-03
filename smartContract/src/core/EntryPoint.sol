@@ -133,5 +133,13 @@ event HospitalDeregistered(address indexed _hospital, bytes32 indexed hId);
  }
 event HospitalUpdated(string _name, string _email, string _location, uint256 _contact, string _about, bytes32 _hID);
 
+function isregistered(bytes32 _id) public view returns(bool){
+    if(isDonor == true || isUser == true || isHospital == true) {
+        return true;
+    }
+    return false;
+}
 
+function getUsernDonorInfo(bytes32 _id) public view returns(Structs.DonorInfo memory, Structs.UserInfo memory){
+    return (registeredDonor[msg.sender][_id], registeredUser[msg.sender][_id]);
 }
