@@ -4,7 +4,7 @@ pragma solidity 0.8.26;
 import{Structs} from "./dataTypes/structs.sol";
 import "../src/dataTypes/datastructures.sol";
 
-contract EntryPoint is DataStructures{
+contract EntryPoint is DataStructures {
 
 Structs.DonorInfo public donors;
 Structs.UserInfo public users;
