@@ -15,6 +15,9 @@ struct SetParam{
     uint256 id;
     bytes32 data;
 }
+//uint256 reputationPoint = 50;
+mapping(uint256 => address) public userToRepuation;
+
 // mapping(address => setParam) public registeredSet;
 //   mapping(address hrs => EnumerableSet.UintSet) internal _sets;
 
@@ -107,6 +110,8 @@ function getBookingStatus( uint256 _rid) public view returns (uint256) {
 
      registrationStatus[_user][set.key()].isRegistered = true;
      registerWithHRC(user, _id, _hrs);
+      userToRepuation[user] = 50;
+
  }
  event SetAdded(address indexed _hrs, uint256 indexed _id, bytes32 data);
 
@@ -127,6 +132,15 @@ function removeFromSet(address _user, bytes32 _id) public isAdmin{
 ////////////////////////////////////////////////////
  mapping( Booking => uint256) public registeredBooking;
 
+ function isMemeberOfSet(address _user, bytes _id) public returns(bool){
+     Set memory set ;  
+    bytes32 _key = set.key();
+     require(_sets[set.hrs].contains(_key), "HRS__Set does not exist");
+     require(  _setMembers[_key].contains(_user), "HRS__not memeber");
+    return  isRegisteredToHRS[_user] == true;
+
+ }
+
 struct Booking {
     bytes32 id;
     address user;
@@ -136,4 +150,11 @@ struct Booking {
     uint256 createdAt;
 }
 
+function getUserReputation(address user) public returns(uint256){
+     userToRepuation[user];
+}
+
+function modifyReputation(address user, uint256 newReputation) public {
+    userToRepuation[user] =newReputation;
+}
 }

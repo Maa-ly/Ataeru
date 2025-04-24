@@ -19,12 +19,8 @@ verificationOfParties
 
 
 ## process mech 
-process.sol(with erc721 native to mint nft health data after sucess process completion)
-process factory.sol
-slashing mech.sol
 
-### REputation mech
-just add rep point to user struct/donor/hospital
+## fix issue in Process mech/ logic
 
 ### rewards mech
 reputationbasedreward.sol
@@ -33,6 +29,3 @@ reputationbasedreward.sol
 math calculation.sol
 market.sol
 
-## help needed
-AI dev
-frontend dev
