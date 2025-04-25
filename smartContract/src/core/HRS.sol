@@ -150,8 +150,8 @@ struct Booking {
     uint256 createdAt;
 }
 
-function getUserReputation(address user) public returns(uint256){
-     userToRepuation[user];
+function getUserReputation public returns(uint256){
+     userToRepuation[msg.sender];
 }
 
 function modifyReputation(address user, uint256 newReputation) public {
