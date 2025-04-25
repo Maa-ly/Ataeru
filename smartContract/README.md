@@ -20,12 +20,12 @@ verificationOfParties
 
 ## process mech 
 
-## fix issue in Process mech/ logic
+## fix issue in Process mech/ logic /// doneeeeeeeeee
 
-### rewards mech
+### rewards mech /// doneeeeeeeeeeeeeeeeeeeeeeeeeeee
 reputationbasedreward.sol
 
-## market place
+## market place 
 math calculation.sol
 market.sol
 

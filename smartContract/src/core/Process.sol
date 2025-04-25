@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import "smartContract/src/core/HRS.sol";
 //import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; // will build a uinque nft minting for process
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "smartContract/src/core/HRS.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"; 
 
 contract Process is Initializable{
@@ -60,7 +61,7 @@ mapping(uint256 => StepDetails) public stepInfo;
 
  }
 
- function _makeStep(StepDetails _details) public {
+ function _makeStep(StepDetails _details) internal {
     uint256 stepid = step;
     step++;
 
@@ -69,7 +70,7 @@ mapping(uint256 => StepDetails) public stepInfo;
         startTine: _details.startTime,
         endTime: _details.endTime,
         DonorInfoHash : _details.DonorInfoHash,
-        DonorReputation : _details.DonorReputation,
+        DonorReputation : HRS.getUserReputation,
         stepGrade: _details.stepGrade,
         Hrid: _details.Hrid,
         stepSummary:_deatils.stepSummary,
@@ -117,20 +118,20 @@ function completeStep(StepDetails _details) public {
     require(info.fin == false, "AlreadyUpdated");
       //require(info.isCompleted == true, "Process__has not completed");
       if(info.stepGrade == A){
-      info.DonorReputation = info.DonorReputation + 10
+      info.DonorReputation = HRS.getUserReputation + 10
       }
       if(info.stepGrade == B){
-        info.DonorReputation = info.DonorReputation + 5
+        info.DonorReputation = HRS.getUserReputation + 5
       }
 
       if(info.stepGrade == C){
         info.DonorReputation = info.DonorReputation + 2
       }
       if(info.stepGrade == F){
-        info.DonorReputation = info.DonorReputation - 10 // can be negative repution will be int 
+        info.DonorReputation = HRS.getUserReputation - 10 // can be negative repution will be int 
       }
       info.fin = true;
-      modifyReputation(info.user, info.DonorReputation);
+      HRS.modifyReputation(info.user, info.DonorReputation);
  }
 
 
