@@ -14,10 +14,11 @@ struct RewardData{
     address _tokenAddress;
     uint256 startTime;
     uint256 endTime;
-    bool  hasBeenUsedBefore;
+   
 }
 
 mapping(address mapping(uint256 => RewardData)) private rewardToEpoch;
+mapping(address => bool) public   hasBeenUsedBefore;
 struct UserReward{
     uint256 lastTimeclaimed;
     uint256 reputationPoint;

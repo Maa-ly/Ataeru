@@ -25,7 +25,20 @@ verificationOfParties
 ### rewards mech /// doneeeeeeeeeeeeeeeeeeeeeeeeeeee
 reputationbasedreward.sol
 
-## market place 
+## market place Fair i
+
+Fair idea of marketPlace
+--- users ---- enter market ----- sell 
+--- buyers/users ---  enter market ----- buy
+
+--- using oracle to determin price of mint 
+
+so should be a simple marketplace for mvp sake, i can update later :) __ would be cool to intergrate opensea for selling and buying lol 
+
+so im going to cut lose the oracle and just implement a simple 
+
+buy and sell marketplace that is 100% permisiionaless
+
 math calculation.sol
 market.sol
 

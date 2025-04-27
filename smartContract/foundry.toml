@@ -4,6 +4,12 @@ out = "out"
 libs = ["lib"]
 
 
-remappings = ["@openzeppelin/contracts=lib/openzeppelin-contracts/contracts"]
+remappings = ["@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"]
+
+[rpc_endpoints]
+localchain = "${LOCALCHAIN_URL}"
+
+[etherscan]
+sidechain = { key = "${SIDECHAIN_KEY}" } 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

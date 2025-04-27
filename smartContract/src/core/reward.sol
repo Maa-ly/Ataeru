@@ -3,9 +3,10 @@ pragma solidity 0.8.26;
 
 import "smartContract/src/core/HRS.sol";
 import "smartContract/src/dataTypes/RewardDataType.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract RewardContract is RewardDataType {
- 
+ using SafeERC20 for IERC20;
 
  function earned(uint256 _epoch, address __token) public {
     userToEpoch[msg.sender][_epoch] = UserReward({
@@ -45,15 +46,19 @@ contract RewardContract is RewardDataType {
             rewardPerShare : distributionperiod,
             _tokenAddress: tokenA  , // remove 
             startTime: rewardData.startTime,
-            endTIme: rewardData.endTime,
-            hasBeenUsedBefore: true //different epoch so doesnt matter 
+            endTIme: rewardData.endTime
+          
         });
-      
-
-         token.push(tokenA);
-
+        
        
-        tokenA.safeTransfer(msg.sender, address(this), usedReward);
+       if(!hasBeenUsedBefore[tokenA]){
+        
+         token.push(tokenA);
+       }
+
+      hasBeenUsedBefore[tokenA] = true;
+       
+        IERC20(tokenA).safeTransferFrom(msg.sender, address(this), usedReward);
 
         return  _epochNumber; 
 
@@ -61,7 +66,6 @@ contract RewardContract is RewardDataType {
     }
 
    
-
 
 function claim(uint256 _epoch, address _token) public {
     earned(_epoch, _token);
@@ -73,8 +77,13 @@ function claim(uint256 _epoch, address _token) public {
  address tokenA =  rewardToEpoch[_token][_epochNumber]._tokenAddress;
  rewardToEpoch[_epochNumber].totalReward = _totalReward - rewardsForUser; 
   
- tokenA.safeTransfer(msg.sender, address(this), rewardsForUser);
+ IERC20(tokenA).safeTransfer(msg.sender, rewardsForUser);
 
+    }
+
+
+    function getRewardAddress() public returns(address[] memory){
+      return token;
     }
 
 
