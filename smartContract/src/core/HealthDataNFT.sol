@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity ^0.8.26;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "smartContract/src/core/Process.sol";
+import "./Process.sol";
 
 contract HealthDataNFT is ERC721, Ownable {
     using Strings for uint256;
@@ -23,18 +23,16 @@ contract HealthDataNFT is ERC721, Ownable {
         process = _process;
     }
 
-    modifier onlyProcess(
+    modifier onlyProcess() {
         require(msg.sender == process, "HealthDataNFT__Not Authorized");
         _;
-    )
+    }
 
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
         _tokenURIs[tokenId] = _tokenURI;
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         //  require(_exists(tokenId), "URI does not exist for this ID");
         return _tokenURIs[tokenId];
     }
@@ -42,10 +40,7 @@ contract HealthDataNFT is ERC721, Ownable {
     // whats the goal/task here...    people can store their nft and use it as profile picture if they want Heyyyyyy
     // okay so a dynamic way
     // heyyyyy,
-    function mint(
-        address recipient,
-        string memory _uri
-    ) public onlyProcess returns (uint256) {
+    function mint(address recipient, string memory _uri) public onlyProcess returns (uint256) {
         uint256 newId = _tokenIds;
         _tokenIds++;
 

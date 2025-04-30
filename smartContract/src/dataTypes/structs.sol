@@ -1,7 +1,7 @@
 //SPDX-License_Identifier: MIT
-pragma solidity 0.8.26; 
+pragma solidity ^0.8.26; 
 
-lib Structs{
+library  Structs {
     struct DonorInfo{
         string name;
         string email;

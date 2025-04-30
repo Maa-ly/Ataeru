@@ -1,8 +1,7 @@
-//SPDX-License_Identifier: MIT
-pragma solidity 0.8.26; 
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
 
-lib Errors{
-
+library Errors {
     error NotAdmin();
     error AdminAlreadySet();
     error AdminAlreadyPending();
@@ -16,11 +15,6 @@ lib Errors{
     error AdminContract();
     error AdminNotOwner();
     error CannotHaveZeroAdmins();
-    error AdminNotSet();
-   error  AppointeeNotSet()
-
-   error AgentActivityAlreadyThat();
-
-  
-
+    error AppointeeNotSet();
+    error AgentActivityAlreadyThat();
 }

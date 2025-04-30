@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity ^0.8.26;
 
-import "smartContract/src/Interface/IFixedPointedOracle.sol";
-import "smartContract/src/core/HealthDataNFT.sol";
+import "../Interface/IFixedPointedOracle.sol";
+import "./HealthDataNFT.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 /**MarketPlace will be changed to an Auction marketplace, to incentivuce users more
  */
@@ -48,9 +48,7 @@ displayDetails[_nftId].sold = true;
 IERC20.safeTransferFrom(msg.sender, recepient, cureentPrice );
 IERC20.safeTransfer(msg.sender,  _nftId)
 
-
     }
-
 
    function getOnsale() public returns(uint256[]){
     returns nftsOnSale;
