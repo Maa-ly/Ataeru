@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "smartContract/src/core/Process.sol";
+import "../core/Process.sol";
 
 contract HealthDataNFT is ERC721, Ownable {
     using Strings for uint256;
@@ -23,10 +23,10 @@ contract HealthDataNFT is ERC721, Ownable {
         process = _process;
     }
 
-    modifier onlyProcess(
-        require(msg.sender == process, "HealthDataNFT__Not Authorized");
+    modifier onlyProcess() {
+        require( msg.sender == process, "HealthDataNFT__Not Authorized");
         _;
-    )
+    }
 
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
         _tokenURIs[tokenId] = _tokenURI;

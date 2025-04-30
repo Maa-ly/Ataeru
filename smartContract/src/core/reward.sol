@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import "smartContract/src/core/HRS.sol";
-import "smartContract/src/dataTypes/RewardDataType.sol";
+import "../core/HRS.sol";
+import "../dataTypes/RewardDataType.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract RewardContract is RewardDataType {
@@ -12,7 +12,7 @@ contract RewardContract is RewardDataType {
     userToEpoch[msg.sender][_epoch] = UserReward({
         lastTimeClaimed : 0,
         reputationPoint: HRS.getUserReputation,
-        rewardsearned:  rewardToEpoch[_token][_epoch].rewardPerShare * reputationPoint,
+        rewardsearned:  rewardToEpoch[_token][_epoch].rewardPerShare * reputationPoint
     });
         
     }
@@ -21,7 +21,7 @@ contract RewardContract is RewardDataType {
     function addRewardMultiple(RewardData rewardData) public returns(uint256[] _epochNumber){
         uint256 length = rewardData.length;
 
-        for(uint256 index < 0 ; index > length ; index ++){
+        for(uint256 index = 0 ; index > length ; index ++){
 
           _epochNUmber =  addReward(rewardData[i]);
         }

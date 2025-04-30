@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.28;
+pragma solidity 0.8.26;
 
-import "smartContract/src/Interface/IFixedPointedOracle.sol";
+import "../Interface/IFixedPointedOracle.sol";
 
 
-contract FixedPriceOracle is IFixedPointedOracle {
+contract FixedPriceOracle is IFixedPointOracle {
     uint256 public price;
 
     event PriceSet(uint256 indexed timestamp, uint256 price);
@@ -13,7 +13,7 @@ contract FixedPriceOracle is IFixedPointedOracle {
         price = _price;
     }
 
-    function setPrice(uint256 _price) external onlyCoreRole(CoreRoles.ORACLE_MANAGER) {
+    function setPrice(uint256 _price) external {
         price = _price;
         emit PriceSet(block.timestamp, _price);
     }

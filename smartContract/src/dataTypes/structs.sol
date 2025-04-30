@@ -1,32 +1,30 @@
-//SPDX-License_Identifier: MIT
-pragma solidity 0.8.26; 
+//SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
 
-lib Structs{
-    struct DonorInfo{
+library Structs {
+    struct DonorInfo {
         string name;
         string email;
         string bloodGroup;
         string location;
-        uint age;
-        uint weight;
-        uint height;
-        uint contact;
+        uint256 age;
+        uint256 weight;
+        uint256 height;
+        uint256 contact;
         string about;
         bytes32 witnessHash; // health document hash
-      
         DonorType donorType;
     }
 
-
-    enum DonorType{
+    enum DonorType {
         SPERMDONOR,
         EGGDONOR,
         SURROGATE
     }
 
-     struct HospitalRequest {
-    //    uint256 id;
-      // address hospitalAddress;
+    struct HospitalRequest {
+        //    uint256 id;
+        // address hospitalAddress;
         DonorType donorType;
         string[] rules;
         uint256 date;
@@ -38,70 +36,70 @@ lib Structs{
         string requestDescription;
         bool isActive;
     }
-    enum RequestStatus{
+
+    enum RequestStatus {
         URGENT,
         NORMAL
     }
 
-    struct UserInfo{
+    struct UserInfo {
         string name;
         string email;
         string location;
-        uint contact;
+        uint256 contact;
         string about;
         bytes32 witnessHash; // health document hash
         bool isUserRegistered;
-       ReceiverType receiverType;
+        ReceiverType receiverType;
     }
 
-    enum ReceiverType{
+    enum ReceiverType {
         SPERMRECEIVER,
         EGGRECEIVER,
         SURROGATERECEIVER
-    }   
+    }
 
-    struct HospitalInfo{
+    struct HospitalInfo {
         string name;
         string email;
         string location;
-        uint contact;
+        uint256 contact;
         string about;
         bytes32 witnessHash; // health document hash
         bool isHospital;
     }
 
-    struct DonorSet{
+    struct DonorSet {
         address hospital;
         address donor;
-          bool isregisterset;
+        bool isregisterset;
     }
 
-    struct UserSet{
+    struct UserSet {
         address hospital;
         address user;
         bool isregisterset;
     }
-    
-    struct AgentInfo{
-    string nameOfAgent;
-    string description;
-    uint256 nftId;
-  //  bool isDeployedAgent;
-    ActivityConfinment activity;
-    AgentStatus status;
-   }
-   enum AgentStatus{
-       PENDING,
-       DEPLOYED,
-       CANCELLED
-   }
 
-   enum ActivityConfinment{
-    NONE,
-    BOOKING,
-    FULL,
-    VERIFYAUTHENTICITY,
-    
-   }
+    struct AgentInfo {
+        string nameOfAgent;
+        string description;
+        uint256 nftId;
+        //  bool isDeployedAgent;
+        ActivityConfinment activity;
+        AgentStatus status;
+    }
 
+    enum AgentStatus {
+        PENDING,
+        DEPLOYED,
+        CANCELLED
+    }
+
+    enum ActivityConfinment {
+        NONE,
+        BOOKING,
+        FULL,
+        VERIFYAUTHENTICITY
+    }
 }

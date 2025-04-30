@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import "smartContract/src/core/HRS.sol";
+import "../core/HRS.sol";
 //import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; // will build a uinque nft minting for process
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "smartContract/src/core/HRS.sol";
+import "../core/HRS.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"; 
 
 contract Process is Initializable{
@@ -33,7 +33,7 @@ struct StepDetails{
     uint40 endTime;
     address _user;
     bytes32 DonorInfoHash;
-  uint256 DonorReputation;
+  int256 DonorReputation;
 StepGrade stepGrade;
   uint256 Hrid;
   string stepSummary;
@@ -111,32 +111,36 @@ function completeStep(StepDetails _details) public {
 
 
 //Complete Process will call this
- function updateReputation(StepDetails) internal{
-     StepDetails memory info = stepInfo[_stepId];
-    // info.user; 
-    require( stepToComplete == 0, "Process not completed");
-    require(info.fin == false, "AlreadyUpdated");
-      //require(info.isCompleted == true, "Process__has not completed");
-      if(info.stepGrade == A){
-      info.DonorReputation = HRS.getUserReputation + 10
-      }
-      if(info.stepGrade == B){
-        info.DonorReputation = HRS.getUserReputation + 5
-      }
+function updateReputation(uint256 _stepId) internal {
+    StepDetails storage info = stepInfo[_stepId]; // Use `storage` to modify state
 
-      if(info.stepGrade == C){
-        info.DonorReputation = info.DonorReputation + 2
-      }
-      if(info.stepGrade == F){
-        info.DonorReputation = HRS.getUserReputation - 10 // can be negative repution will be int 
-      }
-      info.fin = true;
-      HRS.modifyReputation(info.user, info.DonorReputation);
- }
+    require(stepToComplete == 0, "Process not completed");
+    require(info.fin == false, "Already updated");
+
+    int256 reputationChange;
+
+    if (info.stepGrade == Grade.A) {
+        reputationChange = HRS.getUserReputation(info.user) + 10;
+    } else if (info.stepGrade == Grade.B) {
+        reputationChange = HRS.getUserReputation(info.user) + 5;
+    } else if (info.stepGrade == Grade.C) {
+        reputationChange = HRS.getUserReputation(info.user) + 2;
+    } else if (info.stepGrade == Grade.F) {
+        reputationChange = HRS.getUserReputation(info.user) - 10;
+    } else {
+        revert("Invalid grade");
+    }
+
+    info.DonorReputation = reputationChange;
+    info.fin = true;
+
+    HRS.modifyReputation(info.user, reputationChange);
+}
+
 
 
 // should be updateable since some conditions are unpredictable
-function setStepsTocomple(uint256 _stepToComplete ){ //add access control
+function setStepsTocomple(uint256 _stepToComplete ) public { //add access control
     stepToComplete = _stepToComplete ;
 }
 function setReceiptAddress(address _newNFTReceipt) public { // add access control

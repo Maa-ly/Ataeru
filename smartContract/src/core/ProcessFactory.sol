@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/proxy/clones.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
+import "./Process.sol";
 
 contract ProcessFactoryContract {
-    use Clones for address;
+    using Clones for address;
 Process processContract;
 // RequestContract requestContract
 // let kaleel help with this

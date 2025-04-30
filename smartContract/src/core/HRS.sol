@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import "../src/permissions/callable.sol";
-import "../src/core/EntryPoint.sol";
-import "../src/dataTypes/HRSstorage.sol";
+import "../permissions/callable.sol";
+import "../core/EntryPoint.sol";
+import "../dataTypes/HRSstorage.sol";
 contract HRC is Callable,  HRSDataStorage{
 
 EntryPoint entry;
@@ -150,7 +150,7 @@ struct Booking {
     uint256 createdAt;
 }
 
-function getUserReputation public returns(uint256){
+function getUserReputation() public returns(uint256){
      userToRepuation[msg.sender];
 }
 

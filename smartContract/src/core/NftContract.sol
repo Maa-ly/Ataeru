@@ -22,9 +22,7 @@ contract ProfileImageNfts is ERC721, Ownable {
         _tokenURIs[tokenId] = _tokenURI;
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         //  require(_exists(tokenId), "URI does not exist for this ID");
         return _tokenURIs[tokenId];
     }
@@ -32,10 +30,7 @@ contract ProfileImageNfts is ERC721, Ownable {
     // whats the goal/task here...    people can store their nft and use it as profile picture if they want Heyyyyyy
     // okay so a dynamic way
     // heyyyyy,
-    function mint(
-        address recipient,
-        string memory _uri
-    ) public returns (uint256) {
+    function mint(address recipient, string memory _uri) public returns (uint256) {
         uint256 newId = _tokenIds;
         _tokenIds++;
 
