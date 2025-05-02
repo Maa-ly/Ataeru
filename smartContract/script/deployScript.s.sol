@@ -34,22 +34,22 @@ VerificationOfParties verification;
 RewardContract reward;
 
 
-    function run() public {
-        vm.createSelectFork(vm.rpcUrl("anvil"));
-        vm.startBroadcast();
-        oracle = new FixedPriceOracle();
-        ai = new AiAgent();
-        entry = new EntryPoint();
-        hnft = new HealthDataNFT();
-        requestFactory= new HospitalRequestFactoryContract ();
-        requestContract = new HospitalRequestContract ();
-        hrc =  new HRC();
-        market = new MarketPlace();
-        pnft = new ProfileImageNfts();
-        process = new Process();
-        processFactory = new ProcessFactoryContract ();
-        verification = new VerificationOfParties();
-        reward = new RewardContract();
-        vm.stopBroadcast();
-    }
+    // function run() public {
+    //     vm.createSelectFork(vm.rpcUrl("anvil"));
+    //     vm.startBroadcast();
+    //     oracle = new FixedPriceOracle();
+    //     ai = new AiAgent();
+    //     entry = new EntryPoint();
+    //     hnft = new HealthDataNFT();
+    //     requestFactory= new HospitalRequestFactoryContract ();
+    //     requestContract = new HospitalRequestContract ();
+    //     hrc =  new HRC();
+    //     market = new MarketPlace();
+    //     pnft = new ProfileImageNfts();
+    //     process = new Process();
+    //     processFactory = new ProcessFactoryContract ();
+    //     verification = new VerificationOfParties();
+    //     reward = new RewardContract();
+    //     vm.stopBroadcast();
+    // }
 }

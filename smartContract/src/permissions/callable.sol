@@ -1,18 +1,30 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
-
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "./permissionstoragetypes.sol";
 import "../dataTypes/errors.sol";
 
-contract Callable is PermissionStorage, Errors {
+contract Callable is PermissionStorage, ErrorStuff {
+    using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.Bytes32Set;
+
     modifier onlyAdmin() {
-        if (!isAdmin(msg.sender)) {
+        if (!isAdmin(msg.sender,msg.sender)) {
             revert NotAdmin();
         }
         _;
     }
 
-    function addPendingAdmin(address account, address admin) external onlyAdmin(account) {
+ modifier checkCanCall(
+        address account
+    ) {
+        require(_checkCanCall(account), InvalidPermissions());
+        _;
+    }
+
+  
+   
+    function addPendingAdmin(address account, address admin) external onlyAdmin {
         AccountPermissions storage permissions = _permissions[account];
 
         // Revert if the admin is already set
@@ -27,7 +39,7 @@ contract Callable is PermissionStorage, Errors {
 
     event PendingAdminAdded(address indexed _account, address indexed owner);
 
-    function removePendingAdmin(address account, address admin) external onlyAdmin(account) {
+    function removePendingAdmin(address account, address admin) external onlyAdmin {
         EnumerableSet.AddressSet storage pendingAdmins = _permissions[account].pendingAdmins;
 
         // Remove the admin from the account's pending admins
@@ -55,7 +67,7 @@ contract Callable is PermissionStorage, Errors {
 
     event AdminSet(address indexed _account, address indexed owner);
 
-    function removeAdmin(address account, address admin) external onlyAdmin(account) {
+    function removeAdmin(address account, address admin) external onlyAdmin {
         EnumerableSet.AddressSet storage admins = _permissions[account].admins;
 
         require(admins.length() > 1, CannotHaveZeroAdmins());
@@ -71,7 +83,7 @@ contract Callable is PermissionStorage, Errors {
 
     function setAppointee(address account, address appointee, address target, bytes4 selector)
         external
-        onlyAdmin(account)
+        onlyAdmin
     {
         AccountPermissions storage permissions = _permissions[account];
 
@@ -89,7 +101,7 @@ contract Callable is PermissionStorage, Errors {
 
     function removeAppointee(address account, address appointee, address target, bytes4 selector)
         external
-        onlyAdmin(account)
+        onlyAdmin
     {
         AccountPermissions storage permissions = _permissions[account];
 
@@ -156,11 +168,17 @@ contract Callable is PermissionStorage, Errors {
         return _permissions[account].pendingAdmins.values();
     }
 
-    function canCall(address account, address caller, address target, bytes4 selector) external view returns (bool) {
+    function canCall(address account, address caller, address target, bytes4 selector) public view returns (bool) {
         return isAdmin(account, caller)
             || _permissions[account].appointeePermissions[caller].contains(_encodeTargetSelector(target, selector));
     }
 
+ function _checkCanCall(
+        address account
+    ) internal view returns (bool) {
+        return canCall(account, msg.sender, address(this), msg.sig);
+    }
+    
     function getAppointeePermissions(address account, address appointee)
         external
         view
@@ -184,4 +202,6 @@ contract Callable is PermissionStorage, Errors {
         bytes32 targetSelector = _encodeTargetSelector(target, selector);
         return _permissions[account].permissionAppointees[targetSelector].values();
     }
+
+    
 }

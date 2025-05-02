@@ -9,7 +9,7 @@ contract FixedPriceOracle is IFixedPointOracle {
 
     event PriceSet(uint256 indexed timestamp, uint256 price);
 
-    constructor(address _core, uint256 _price)  {
+    constructor( uint256 _price)  {
         price = _price;
     }
 

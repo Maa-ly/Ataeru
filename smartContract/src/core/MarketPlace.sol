@@ -4,54 +4,62 @@ pragma solidity 0.8.26;
 import "../Interface/IFixedPointedOracle.sol";
 import "../core/HealthDataNFT.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-/**
- * MarketPlace will be changed to an Auction marketplace, to incentivuce users more
- */
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract MarketPlace {
-    IFixedPointedOracle oracle;
-
     using SafeERC20 for IERC20;
 
-    uint256[] nftsOnSale;
-    uint256 saleEpoch = 1;
+    IFixedPointOracle public oracle;
+    HealthDataNFT public healthDataNFT;
+    IERC20 public stableToken; // token used for buying NFTs
+
+    uint256 public saleEpoch = 1;
+    uint256[] public nftsOnSale;
 
     struct NFTSellDetails {
         address nftOwner;
-        uint256 sellTimeStamp;
-        uint256 _price;
-        uint256 _saleEpoch;
+        uint256 setTimeStamp;
+        uint256 price;
+        uint256 saleEpoch;
         bool sold;
     }
 
-    mapping(NFTSellDetails => uint256) public displayDetails;
+    mapping(uint256 => NFTSellDetails) public displayDetails;
 
-    function sell(uint256 _nftId) public {
-        uint256 currentEpoch = saleEpoch;
-        saleEpoch++;
-        HealthDataNFT.isOwnerOFToken(_nftId);
+    constructor(address _healthDataNFT, address _stableToken, address _oracle) {
+        healthDataNFT = HealthDataNFT(_healthDataNFT);
+        stableToken = IERC20(_stableToken);
+        oracle = IFixedPointOracle(_oracle);
+    }
+
+    function sell(uint256 _nftId, uint256 price) external {
+        require(healthDataNFT.ownerOf(_nftId) == msg.sender, "Not owner of NFT");
+
+        healthDataNFT.safeTransferFrom(msg.sender, address(this), _nftId);
 
         displayDetails[_nftId] = NFTSellDetails({
             nftOwner: msg.sender,
-            seTimeStamp: block.timestamp,
-            _price: oracle.price,
-            _saleEpoch: currentEpoch,
+            setTimeStamp: block.timestamp,
+            price: price,
+            saleEpoch: saleEpoch++,
             sold: false
         });
 
-        IERC20.safeTransferFrom(msg.sender, address(this), _nftId);
+        nftsOnSale.push(_nftId);
     }
 
-    function buy(uint256 _nftId, uint256 epoch) public {
-        require(displayDetails[_nftId]._saleEpoch != 0 && displayDetails[_nftId].sold == false, "Marketplace__Invalid");
-        uint256 cureentPrice = displayDetails[_nftId]._price;
-        address recepient = displayDetails[_nftId].nftOwner;
-        displayDetails[_nftId].sold = true;
-        IERC20.safeTransferFrom(msg.sender, recepient, cureentPrice);
-        IERC20.safeTransfer(msg.sender, _nftId);
+    function buy(uint256 _nftId) external {
+        NFTSellDetails storage details = displayDetails[_nftId];
+        require(!details.sold, "Already sold");
+        require(details.saleEpoch != 0, "NFT not for sale");
+
+        details.sold = true;
+
+        stableToken.safeTransferFrom(msg.sender, details.nftOwner, details.price);
+        healthDataNFT.safeTransferFrom(address(this), msg.sender, _nftId);
     }
 
-    function getOnsale() public returns (uint256[]) {
+    function getOnSale() external view returns (uint256[] memory) {
         return nftsOnSale;
     }
 }

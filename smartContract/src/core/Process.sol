@@ -2,157 +2,130 @@
 pragma solidity 0.8.26;
 
 import "../core/HRS.sol";
-//import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; // will build a uinque nft minting for process
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../core/HRS.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"; 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Process is Initializable{
+contract Process is Initializable {
+    HRC public HRS;
 
- // so there has to  be a type, donor type
+    uint256 public step = 1;
+    uint256 public stepToComplete;
+    address public nftReceipt;
 
- uint256 step = 1;
- uint256 stepToComplete ;
- address nftReceipt;
-
- function initialize(address __nftReceipt, uint256 __stepToComplete )public initializer {
-    nftReceipt =  __nftReceipt;
-    stepToComplete = __stepToComplete;
-
- }
-
-struct ProcessInfo{
-    StepDetails stepDetails;
-    bool fin;
-}
-
-
-struct StepDetails{
-    string stepName;
-    uint40 startTime;
-    uint40 endTime;
-    address _user;
-    bytes32 DonorInfoHash;
-  int256 DonorReputation;
-StepGrade stepGrade;
-  uint256 Hrid;
-  string stepSummary;
-  uint256 stepId;
-  bool isStarted;
-  bool isCompleted;
- 
- // uint256 StepToComplete ;
-}
-enum StepGrade {
-    A,
-    B,
-    C 
-}
-
-mapping(uint256 => StepDetails) public stepInfo;
-
- function makeStep(StepDetails[] details) public {
-    require(HRS.isMemeberOfSet(details._user , details.Hrid));
-    uint256 length = details.length;
-    for(uint256 index = 0; index < length ; index ++){
-        _makeStep(details[i]);
-    }
-    
-
- }
-
- function _makeStep(StepDetails _details) internal {
-    uint256 stepid = step;
-    step++;
-
-    stepInfo[stepid] = StepDetails({
-        stepName: _details.stepName,
-        startTine: _details.startTime,
-        endTime: _details.endTime,
-        DonorInfoHash : _details.DonorInfoHash,
-        DonorReputation : HRS.getUserReputation,
-        stepGrade: _details.stepGrade,
-        Hrid: _details.Hrid,
-        stepSummary:_deatils.stepSummary,
-        stepId: stepid,
-        isStarted: false,
-        isCompleted: false
-       // fin : false
-      //  StepToComplete : _StepToComplete 
-    });
-
- }
-
-function startStep(_stepId) public {
-       StepDetails memory info = stepInfo[_stepId];
-
-       require(info.startTime >= block.timestamp, "Process_ setp hasnt started yet");
-       info.isStarted = true;
-
-}
-
-function completeStep(StepDetails _details) public {
-    StepDetails memory info = stepInfo[_details.stepId];
-
-   require(info.startTime >= block.timestamp, "Process_ setp hasnt started yet");
-
-   info.isCompleted = true;
-   //info.StepToComplete = info.StepToComplete - 1; // remove 
-   stepToComplete = stepToComplete - 1;
-
-}
-
-
- function updateStepInfoGrade(StepDetails _details) public {
-      StepDetails memory info = stepInfo[_stepId];
-      require(info.isCompleted == true, "Process__has not completed");
-      info.stepGrade = _details.stepGrade;
- }
-
-
-//Complete Process will call this
-function updateReputation(uint256 _stepId) internal {
-    StepDetails storage info = stepInfo[_stepId]; // Use `storage` to modify state
-
-    require(stepToComplete == 0, "Process not completed");
-    require(info.fin == false, "Already updated");
-
-    int256 reputationChange;
-
-    if (info.stepGrade == Grade.A) {
-        reputationChange = HRS.getUserReputation(info.user) + 10;
-    } else if (info.stepGrade == Grade.B) {
-        reputationChange = HRS.getUserReputation(info.user) + 5;
-    } else if (info.stepGrade == Grade.C) {
-        reputationChange = HRS.getUserReputation(info.user) + 2;
-    } else if (info.stepGrade == Grade.F) {
-        reputationChange = HRS.getUserReputation(info.user) - 10;
-    } else {
-        revert("Invalid grade");
+    enum StepGrade {
+        A,
+        B,
+        C,
+        F
     }
 
-    info.DonorReputation = reputationChange;
-    info.fin = true;
+    struct StepDetails {
+        string stepName;
+        uint40 startTime;
+        uint40 endTime;
+        address user;
+        bytes32 DonorInfoHash;
+        int256 DonorReputation;
+        StepGrade stepGrade;
+        bytes32 Hrid;
+        string stepSummary;
+        uint256 stepId;
+        bool isStarted;
+        bool isCompleted;
+        bool fin;
+    }
 
-    HRS.modifyReputation(info.user, reputationChange);
-}
+    mapping(uint256 => StepDetails) public stepInfo;
 
+    function initialize(address __nftReceipt, address _hrs, uint256 __stepToComplete) public initializer {
+        nftReceipt = __nftReceipt;
+        stepToComplete = __stepToComplete;
+        HRS = HRC(_hrs);
+    }
 
+    function makeStep(StepDetails[] memory details) public {
+        for (uint256 i = 0; i < details.length; i++) {
+            require(HRS.isMemberOfSet(details[i].user, details[i].Hrid), "User not in HRS set");
+            _makeStep(details[i]);
+        }
+    }
 
-// should be updateable since some conditions are unpredictable
-function setStepsTocomple(uint256 _stepToComplete ) public { //add access control
-    stepToComplete = _stepToComplete ;
-}
-function setReceiptAddress(address _newNFTReceipt) public { // add access control
-    nftReceipt =  _newNFTReceipt;
+    function _makeStep(StepDetails memory _details) internal {
+        uint256 stepId = step++;
+        stepInfo[stepId] = StepDetails({
+            stepName: _details.stepName,
+            startTime: _details.startTime,
+            endTime: _details.endTime,
+            user: _details.user,
+            DonorInfoHash: _details.DonorInfoHash,
+            DonorReputation: HRS.getUserReputation(),//TODO
+            stepGrade: _details.stepGrade,
+            Hrid: _details.Hrid,
+            stepSummary: _details.stepSummary,
+            stepId: stepId,
+            isStarted: false,
+            isCompleted: false,
+            fin: false
+        });
+    }
 
-}
+    function startStep(uint256 _stepId) public {
+        StepDetails storage info = stepInfo[_stepId];
+        require(block.timestamp >= info.startTime, "Step hasn't started yet");
+        info.isStarted = true;
+    }
 
-function processComplete() public {
-    uint256 stepstocomplete = stepToComplete ;
-    require (stepsToComplete == 0, "Process__ Steps isnt completed" );
-    updateReputation();
-   // _mint(nftReceipt); // fix this
-}
-    
+    function completeStep(uint256 _stepId) public {
+        StepDetails storage info = stepInfo[_stepId];
+        require(block.timestamp >= info.endTime, "Step not finished yet");
+        require(info.isStarted, "Step not started");
+        require(!info.isCompleted, "Step already completed");
+
+        info.isCompleted = true;
+        stepToComplete -= 1;
+    }
+
+    function updateStepInfoGrade(uint256 _stepId, StepGrade _grade) public {
+        StepDetails storage info = stepInfo[_stepId];
+        require(info.isCompleted, "Step not completed");
+        info.stepGrade = _grade;
+    }
+
+    function updateReputation(uint256 _stepId) internal {
+        StepDetails storage info = stepInfo[_stepId];
+        require(stepToComplete == 0, "Process not completed");
+        require(!info.fin, "Already updated");
+
+        int256 reputation = HRS.getUserReputation();
+
+        if (info.stepGrade == StepGrade.A) {
+            reputation += 10;
+        } else if (info.stepGrade == StepGrade.B) {
+            reputation += 5;
+        } else if (info.stepGrade == StepGrade.C) {
+            reputation += 2;
+        } else if (info.stepGrade == StepGrade.F) {
+            reputation -= 10;
+        } else {
+            revert("Invalid grade");
+        }
+
+        info.DonorReputation = reputation;
+        info.fin = true;
+
+        HRS.modifyReputation(info.user, reputation);
+    }
+
+    function processComplete(uint256 _finalStepId) public {
+        require(stepToComplete == 0, "Not all steps completed");
+        updateReputation(_finalStepId);
+        // TODO: integrate NFT minting logic for `nftReceipt`
+    }
+
+    function setStepsToComplete(uint256 _stepToComplete) public {
+        stepToComplete = _stepToComplete;
+    }
+
+    function setReceiptAddress(address _newNFTReceipt) public {
+        nftReceipt = _newNFTReceipt;
+    }
 }

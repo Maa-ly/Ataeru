@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-library Structs {
+abstract contract Structs {
     struct DonorInfo {
         string name;
         string email;
@@ -26,7 +26,7 @@ library Structs {
         //    uint256 id;
         // address hospitalAddress;
         DonorType donorType;
-        string[] rules;
+        string rules;
         uint256 date;
         uint256 time;
         uint256 maxDonors;
@@ -49,7 +49,7 @@ library Structs {
         uint256 contact;
         string about;
         bytes32 witnessHash; // health document hash
-        bool isUserRegistered;
+      //  bool isUserRegistered;
         ReceiverType receiverType;
     }
 
@@ -66,7 +66,7 @@ library Structs {
         uint256 contact;
         string about;
         bytes32 witnessHash; // health document hash
-        bool isHospital;
+      //  bool isHospital;
     }
 
     struct DonorSet {

@@ -20,11 +20,14 @@ contract HealthDataNFT is ERC721, Ownable {
     }
 
     constructor(address _process) ERC721("HealthDataNFT", "HDNFT") Ownable(msg.sender) {
-        process = _process;
+        process =Process( _process);
     }
 
     modifier onlyProcess() {
-        require( msg.sender == process, "HealthDataNFT__Not Authorized");
+        if(msg.sender != address(process)) {
+            revert("HealthDataNFT__Not Authorized");
+        }
+        
         _;
     }
 

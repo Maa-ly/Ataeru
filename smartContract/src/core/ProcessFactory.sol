@@ -10,9 +10,13 @@ Process processContract;
 // RequestContract requestContract
 // let kaleel help with this
 //clone requests
-    constructor(address _contract) public {
+// uint256 steptsToComplete;
+// address nftReceipt;
+// address HRS;
+
+    constructor(address _contract, address _nftReceipt, address _HRS, uint256 _steptsToComplete)  {
         processContract = Process(_contract.clone());
-        processContract.initialize();
+        processContract.initialize(_nftReceipt, _HRS, _steptsToComplete);
     }
     
 

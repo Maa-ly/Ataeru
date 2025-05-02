@@ -1,15 +1,24 @@
 //SPDX-License_Identifier: MIT
 pragma solidity 0.8.26; 
 
-library DataStructures{
+import "./structs.sol";
+
+contract DataStructures is Structs{
 
   
-        mapping(address => DonorInfo) donors;
-        mapping(address => UserInfo) users;
-        mapping(address => HospitalInfo) hospitals;
-        mapping(address => mapping(address => DonorSet)) donorSets;
-        mapping(address => mapping(address => UserSet)) userSets;
-        mapping(address => mapping(address => AgentInfo)) agents;
-        mapping(address => mapping(bytes32 => mapping(bool => DonorInfo))) isRegisteredDonor;
-        mapping(address => mapping(bytes32 => UserInfo)) registeredUser;
+        mapping(address => DonorInfo) public donors;
+        mapping(address => UserInfo) public users;
+        mapping(address => HospitalInfo) public hospitals;
+        mapping(address => mapping(address => DonorSet))public  donorSets;
+        mapping(address => mapping(address => UserSet)) public userSets;
+        mapping(address => mapping(address => AgentInfo)) public agents;
+        mapping(address => mapping(bytes32 => mapping(bool => DonorInfo)))public  registeredDonor;
+        mapping(address => mapping(bytes32 => UserInfo)) public registeredUser;
+        mapping(address => mapping(bytes32 => HospitalInfo)) public registeredHospital;
+        // bool isDonor;
+        // bool isHospital;
+        // bool isUser;
+         mapping(address => bool) public isDonor;
+    mapping(address => bool) public isUser;
+    mapping(address => bool) public isHospital;
 }

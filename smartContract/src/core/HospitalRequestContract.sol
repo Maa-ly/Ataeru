@@ -10,7 +10,7 @@ contract HospitalRequestContract is Initializable {
     Structs.HospitalRequest public hospitalRequest;
     uint256 maxDonor;
 
-    mapping(address => mapping(uint256 => HospitalRequest)) public hospitalRequests;
+    mapping(address => mapping(uint256 => Structs.HospitalRequest)) public hospitalRequests;
 
     function initialize(address _hospitalAddress, uint256 _maxDonor) public initializer {
         hospitalAddress = _hospitalAddress;
@@ -18,14 +18,14 @@ contract HospitalRequestContract is Initializable {
     }
 
     function makeADonorRequest(
-        DonorType _donorType,
+        Structs.DonorType _donorType,
         string memory _rules,
         uint256 _date,
         uint256 _time,
         uint256 _maxDonor,
         uint256 _minAmount,
         uint256 _maxAmount,
-        RequestStatus _status,
+        Structs.RequestStatus _status,
         string memory _des
     ) public returns (uint256 _id) {
         hospitalRequest = Structs.HospitalRequest(
@@ -38,29 +38,43 @@ contract HospitalRequestContract is Initializable {
     }
 
     function makeMultipleDonorRequest(
-        DonorType[] _donorType,
+        Structs.DonorType[] memory _donorType,
         string[] memory _rules,
-        uint256[] _date,
-        uint256[] _time,
-        uint256[] _maxDonor,
-        uint256[] _minAmount,
-        uint256[] _maxAmount,
-        RequestStatus[] _status,
+        uint256[] memory _date,
+        uint256[] memory _time,
+        uint256[] memory _maxDonor,
+        uint256[] memory _minAmount,
+        uint256[] memory _maxAmount,
+        Structs.RequestStatus[] memory _status,
         string[] memory _des
     ) public returns (uint256 _id) {
-        for (uint256 i = 0; i < _donorType.length; i++) {
-            hospitalRequest = Structs.HospitalRequest(
-                _donorType[i],
-                _rules[i],
-                _date[i],
-                _time[i],
-                _maxDonor[i],
-                _minAmount[i],
-                _maxAmount[i],
-                _status[i],
-                _des[i],
-                true[i]
-            );
+        
+    //      require(
+    //     _donorType.length == _rules.length &&
+    //     _rules.length == _date.length &&
+    //     _date.length == _time.length &&
+    //     _time.length == _maxDonor.length &&
+    //     _maxDonor.length == _minAmount.length &&
+    //     _minAmount.length == _maxAmount.length &&
+    //     _maxAmount.length == _status.length &&
+    //     _status.length == _des.length,
+    // );
+
+    for (uint256 i = 0; i < _donorType.length; i++) {
+         hospitalRequest = Structs.HospitalRequest({
+            donorType: _donorType[i],
+            rules: _rules[i],
+            date: _date[i],
+            time: _time[i],
+            maxDonors: _maxDonor[i],
+           minAmontpayment: _minAmount[i],
+            maxAmountPayment: _maxAmount[i],
+            status: _status[i],
+        requestDescription: _des[i],
+            isActive: true
+        });
+
+        hospitalRequests[msg.sender][id] = hospitalRequest; // Save request
             _id = id + 1;
             hospitalRequests[hospitalAddress][id] = hospitalRequest;
 

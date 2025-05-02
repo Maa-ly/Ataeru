@@ -3,122 +3,144 @@ pragma solidity 0.8.26;
 
 import "./NftContract.sol";
 import "../dataTypes/datastructures.sol";
-import "../dataTypes/structs.sol";
 import "../permissions/callable.sol";
 import "../core/HRS.sol";
 import "../core/VerificationOfParties.sol";
+import "./AgentFactory.sol";
 
 contract AiAgent is DataStructures {
     ProfileImageNfts internal mft;
-    Structs.AgentInfo public agentInfo;
+    AiAgentFactory agentFactory;
     Callable public canCall;
-    HRS public hrs;
+    HRC public hrs;
     VerificationOfParties public vop;
 
-    constructor(address _hrs, address _vop) {
-        hrs = HRS(_hrs);
-        vop = VerificationOfParties(_vop);
-    }
+    bool public isAgent;
 
-    function deployAiAgent(uint256 nftId, string memory agentName, string memory _des, ActivityConfinment _act)
-        public
-        returns (address agentAddress)
-    {
+    // Ensure this is inherited from DataStructures or defined here:
+    // mapping(address => mapping(address => AgentInfo)) public agents;
+
+    constructor(address _hrs, address _vop/*, address _agentFactory*/) {
+        hrs = HRC(_hrs);
+        vop = VerificationOfParties(_vop);
+       /* agentFactory = AiAgentFactory(_agentFactory);*/
+    }
+// error onlyFactoryCanCall();
+//     modifier onlyFactory() {
+//         if(msg.sender != agentFactory){
+//             revert onlyFactoryCanCall();
+//         }
+//         _;
+//     }
+
+//Only factory or whatever 
+    function deployAiAgent(
+        uint256 nftId,
+        string memory agentName,
+        string memory _des,
+        ActivityConfinment _act,
+        address _agentAddress
+    ) public /*onlyFactory */ {
         require(mft.ownerOf(nftId) == msg.sender, "You are not the owner of this NFT");
 
-        agentInfo = Structs.AgentInfo({
-            agentName: agentName,
+        // agentAddress = address(new AiAgent(address(hrs), address(vop)));
+
+         agents[msg.sender][_agentAddress] = AgentInfo({
+            nameOfAgent: agentName,
             description: _des,
-            activityConfinment: _act,
+            activity: _act,
             nftId: nftId,
-            //isAgent: true,
-            status: Structs.AgentInfo.AgentStatus.DEPLOYED
+            status: AgentStatus.DEPLOYED
         });
 
-        agentAddress = address(new AiAgent(nftId, agentName, _des, _act));
-        agents[msg.sender][agentAddress] = agentInfo;
+       
+
+       // agents[msg.sender][agentAddress] = agentInfo;
         isAgent = true;
 
-        _addAgentPermission(_act);
+        _addAgentPermission(msg.sender, _agentAddress, _act);
 
-        return agentAddress; //Address to be added to premission based on permission type
+       
     }
 
     function cancelAgent(address agentAddress) public {
         require(
-            agents[msg.sender][agentAddress].status == Structs.AgentInfo.AgentStatus.DEPLOYED, "Agent is not deployed"
+            agents[msg.sender][agentAddress].status == AgentStatus.DEPLOYED,
+            "Agent is not deployed"
         );
-        agents[msg.sender][agentAddress].status = Structs.AgentInfo.AgentStatus.CANCELLED;
-        //(activity )= getAgentPermsission(agentAddress);
+        agents[msg.sender][agentAddress].status = AgentStatus.CANCELLED;
     }
 
     function reactivateAgent(address agentAddress) public {
         require(
-            agents[msg.sender][agentAddress].status == Structs.AgentInfo.AgentStatus.CANCELLED, "Agent is not cancelled"
+            agents[msg.sender][agentAddress].status == AgentStatus.CANCELLED,
+            "Agent is not cancelled"
         );
-        agents[msg.sender][agentAddress].status = Structs.AgentInfo.AgentStatus.DEPLOYED;
+        agents[msg.sender][agentAddress].status = AgentStatus.DEPLOYED;
     }
 
-    function updateAgent(address agentAddress, string memory agentName, string memory _des, ActivityConfinment _act)
-        public
-    {
-        // check for ownaship
+    function updateAgent(
+        address agentAddress,
+        string memory agentName,
+        string memory _des,
+        ActivityConfinment _act
+    ) public {
+        AgentInfo storage agent = agents[msg.sender][agentAddress];
+        ActivityConfinment currentActivity = agent.activity;
 
-        // check old activity permision
-        (activity) = getAgentPermsission(agentAddress);
-        require(activity != _act, AgentActivityAlreadyThat());
+        require(currentActivity != _act, "Agent already has this activity");
+        require(agent.status == AgentStatus.DEPLOYED, "Agent is not deployed");
 
-        if (
-            activity == agentInfo.ActivityConfinment.BOOKING || activity == agentInfo.ActivityConfinment.FULL
-                || activity == agentInfo.ActivityConfinment.VERIFYAUTHENTICITY
-        ) {
-            _removeAgentPermission(activity);
-        }
+        _removeAgentPermission(msg.sender, agentAddress, currentActivity);
 
-        require(
-            agents[msg.sender][agentAddress].status == Structs.AgentInfo.AgentStatus.DEPLOYED, "Agent is not deployed"
-        );
-        agents[msg.sender][agentAddress].agentName = agentName;
-        agents[msg.sender][agentAddress].description = _des;
-        agents[msg.sender][agentAddress].activityConfinment = _act;
+        agent.nameOfAgent = agentName;
+        agent.description = _des;
+        agent.activity = _act;
 
-        _addAgentPermission(_act);
+        _addAgentPermission(msg.sender, agentAddress, _act);
     }
 
-    function getAgentInfo(address agentAddress) public view returns (Structs.AgentInfo memory) {
+    function getAgentInfo(address agentAddress) public view returns (AgentInfo memory) {
         return agents[msg.sender][agentAddress];
     }
 
-    function _addAgentPermission(Struct.agentInfo.ActivityConfinment activity) internal {
-        if (activity == Structs.AgentInfo.ActivityConfinment.BOOKING) {
-            canCall.setAppointee(msg.sender, address(agentAddress), address(hrs), hrs.requestBooking.selector);
-        }
-        if (activity == Structs.AgentInfo.ActivityConfinment.FULL) {
-            canCall.addAdmin(msg.sender, address(agentAddress));
-        }
-        if (activity == Structs.AgentInfo.ActivityConfinment.VERIFYAUTHENTICITY) {
-            canCall.addAppointee(msg.sender, address(agentAddress), address(vop), vop.verifyAiAgent.selector);
-        }
-        //   canCall.addAdmin(msg.sender, address(this));
-    }
-
-    function _removeAgentPermission(Struct.agentInfo.ActivityConfinment activity) internal {
-        if (activity == Structs.AgentInfo.ActivityConfinment.BOOKING) {
-            canCall.removeAppointee(msg.sender, address(agentAddress), address(hrs), hrs.requestBooking.selector);
-        }
-        if (activity == Structs.AgentInfo.ActivityConfinment.FULL) {
-            canCall.removeAdmin(msg.sender, address(agentAddress));
-        }
-        if (activity == Structs.AgentInfo.ActivityConfinment.VERIFYAUTHENTICITY) {
-            canCall.removeAppointee(msg.sender, address(agentAddress), address(vop), vop.verifyAiAgent.selector);
-        }
-    }
-
-    function getAgentPermsission(address agentAddress)
+    function getAgentPermission(address agentAddress)
         public
         view
-        returns (Structs.AgentInfo.ActivityConfinment activity)
+        returns (ActivityConfinment)
     {
-        return agents[msg.sender][agentAddress].activityConfinment;
+        return agents[msg.sender][agentAddress].activity;
+    }
+
+    function _addAgentPermission(
+        address user,
+        address agentAddress,
+       ActivityConfinment activity
+    ) internal {
+        if (activity == ActivityConfinment.BOOKING) {
+            canCall.setAppointee(user, agentAddress, address(hrs), HRC.requestBooking.selector);
+        }
+        if (activity == ActivityConfinment.FULL) {
+            canCall.addPendingAdmin(user, agentAddress);
+        }
+        if (activity == ActivityConfinment.VERIFYAUTHENTICITY) {
+            canCall.setAppointee(user, agentAddress, address(vop), vop.verifyAiAgent.selector);
+        }
+    }
+
+    function _removeAgentPermission(
+        address user,
+        address agentAddress,
+       ActivityConfinment activity
+    ) internal {
+        if (activity == ActivityConfinment.BOOKING) {
+            canCall.removeAppointee(user, agentAddress, address(hrs), HRC.requestBooking.selector);
+        }
+        if (activity == ActivityConfinment.FULL) {
+            canCall.removeAdmin(user, agentAddress);
+        }
+        if (activity == ActivityConfinment.VERIFYAUTHENTICITY) {
+            canCall.removeAppointee(user, agentAddress, address(vop), vop.verifyAiAgent.selector);
+        }
     }
 }
