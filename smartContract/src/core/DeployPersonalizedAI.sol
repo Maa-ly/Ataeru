@@ -20,18 +20,18 @@ contract AiAgent is DataStructures {
     // Ensure this is inherited from DataStructures or defined here:
     // mapping(address => mapping(address => AgentInfo)) public agents;
 
-    constructor(address _hrs, address _vop/*, address _agentFactory*/) {
+    constructor(address _hrs, address _vop, address _agentFactory) {
         hrs = HRC(_hrs);
         vop = VerificationOfParties(_vop);
-       /* agentFactory = AiAgentFactory(_agentFactory);*/
+       agentFactory = AiAgentFactory(_agentFactory);
     }
-// error onlyFactoryCanCall();
-//     modifier onlyFactory() {
-//         if(msg.sender != agentFactory){
-//             revert onlyFactoryCanCall();
-//         }
-//         _;
-//     }
+error onlyFactoryCanCall();
+    modifier onlyFactory() {
+        if(msg.sender != address(agentFactory)){
+            revert onlyFactoryCanCall();
+        }
+        _;
+    }
 
 //Only factory or whatever 
     function deployAiAgent(
@@ -40,7 +40,7 @@ contract AiAgent is DataStructures {
         string memory _des,
         ActivityConfinment _act,
         address _agentAddress
-    ) public /*onlyFactory */ {
+    ) public onlyFactory {
         require(mft.ownerOf(nftId) == msg.sender, "You are not the owner of this NFT");
 
         // agentAddress = address(new AiAgent(address(hrs), address(vop)));

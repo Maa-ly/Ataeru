@@ -13,11 +13,13 @@ import {ProfileImageNfts} from "../src/core/NftContract.sol";
 import { Process} from "../src/core/Process.sol";
 import {ProcessFactoryContract} from "../src/core/ProcessFactory.sol";
 import { VerificationOfParties } from "../src/core/VerificationOfParties.sol";
+import{AiAgentFactory} from "../src/core/AgentFactory.sol";
 import  "../src/core/reward.sol";
 import "forge-std/console.sol";
 
 
 contract DeployScript is Script {
+    AiAgentFactory agentFactory;
 FixedPriceOracle oracle;
 AiAgent ai;
 EntryPoint entry;
@@ -32,24 +34,48 @@ ProcessFactoryContract processFactory;
 VerificationOfParties verification;
 
 RewardContract reward;
+ address public hospitalAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+        uint256 public maxdonors = 50;
+          address tokenAddress = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 ; 
+           uint256 stepsToComplete = 9;
+           uint256 _price = 6;
+        address nftReceiptent = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC ;
 
+    function run() public {
+        vm.createSelectFork(vm.rpcUrl("anvil"));
+        vm.startBroadcast();
+        oracle = new FixedPriceOracle(_price);
+         entry = new EntryPoint();
+       agentFactory = new AiAgentFactory();
+      hrc =  new HRC(address( entry), address( requestContract));
+        ai = new AiAgent(address(hrc), address(verification),address(agentFactory ) );
+          process = new Process();
+        hnft = new HealthDataNFT(address( process ));
+         requestContract = new HospitalRequestContract ();
+        requestFactory= new HospitalRequestFactoryContract (address ( requestContract ),address( hospitalAddress), maxdonors);
+       
+       
+      
+        market = new MarketPlace(address(hnft), address(tokenAddress), address(oracle) );
+        pnft = new ProfileImageNfts();
+     
+        processFactory = new ProcessFactoryContract (address(process), address (nftReceiptent), address(hrc), stepsToComplete);
+       
+        verification = new VerificationOfParties();
+        reward = new RewardContract(address(hrc));
+        vm.stopBroadcast();
 
-    // function run() public {
-    //     vm.createSelectFork(vm.rpcUrl("anvil"));
-    //     vm.startBroadcast();
-    //     oracle = new FixedPriceOracle();
-    //     ai = new AiAgent();
-    //     entry = new EntryPoint();
-    //     hnft = new HealthDataNFT();
-    //     requestFactory= new HospitalRequestFactoryContract ();
-    //     requestContract = new HospitalRequestContract ();
-    //     hrc =  new HRC();
-    //     market = new MarketPlace();
-    //     pnft = new ProfileImageNfts();
-    //     process = new Process();
-    //     processFactory = new ProcessFactoryContract ();
-    //     verification = new VerificationOfParties();
-    //     reward = new RewardContract();
-    //     vm.stopBroadcast();
-    // }
+        // console.log("Reward Address is deployed at:", reward);
+        // console.log("ProcessFactory address is deployed at",processFactory);
+        // console.log("Verification address is deployed at:",verification);
+        // console.log("profilePicture nft address is deployed At:",pnft);
+        // console.log("Market address is deployed at:",market);
+        // console.log("Oracle address is deplyed at",oracle);
+        // console.log("Entry address is deployed at:", entry);
+        // console.log("agentFactory address was deployed at",agentFactory);
+        // console.log("HRC address is deployed at:",hrc);
+        // console.log("Ai agent address is deployed at: ",ai);
+        // console.log("Health data Nft address is deplyed at:",hnft);
+        // console.log("Request Factory Address is deployed at:",requestFactory);
+    }
 }
