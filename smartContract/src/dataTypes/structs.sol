@@ -14,6 +14,7 @@ abstract contract Structs {
         string about;
         bytes32 witnessHash; // health document hash
         DonorType donorType;
+        address donor;
     }
 
     enum DonorType {
@@ -50,7 +51,8 @@ abstract contract Structs {
         string about;
         bytes32 witnessHash; // health document hash
       //  bool isUserRegistered;
-        ReceiverType receiverType;
+        //ReceiverType receiverType;
+        address user;
     }
 
     enum ReceiverType {
@@ -67,6 +69,9 @@ abstract contract Structs {
         string about;
         bytes32 witnessHash; // health document hash
       //  bool isHospital;
+      address hospitalAddress;
+      address requests;
+      
     }
 
     struct DonorSet {

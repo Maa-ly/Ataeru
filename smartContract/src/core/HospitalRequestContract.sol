@@ -4,6 +4,8 @@ pragma solidity 0.8.26;
 import "../dataTypes/structs.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+//import "@openzeppelin/contracts/proxy/Clones.sol";
+
 contract HospitalRequestContract is Initializable {
     uint256 public id;
     address public hospitalAddress;

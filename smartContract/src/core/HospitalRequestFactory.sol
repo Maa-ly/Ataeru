@@ -14,4 +14,15 @@ contract HospitalRequestFactoryContract {
         requestContract = HospitalRequestContract(clone);
         requestContract.initialize(_hospitalAddress, _maxDonor);
     }
+
+    function cloneHospitalRequest(
+        address _hospitalAddress,
+        uint256 _maxDonor
+    ) public returns (address) {
+        address clone = address(requestContract).clone();
+        HospitalRequestContract(clone).initialize(_hospitalAddress, _maxDonor);
+        return clone;
+    }
 }
+
+

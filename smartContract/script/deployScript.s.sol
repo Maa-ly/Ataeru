@@ -45,14 +45,17 @@ RewardContract reward;
         vm.createSelectFork(vm.rpcUrl("anvil"));
         vm.startBroadcast();
         oracle = new FixedPriceOracle(_price);
-         entry = new EntryPoint();
+        
        agentFactory = new AiAgentFactory();
-      hrc =  new HRC(address( entry), address( requestContract));
-        ai = new AiAgent(address(hrc), address(verification),address(agentFactory ) );
+   
+     
           process = new Process();
         hnft = new HealthDataNFT(address( process ));
          requestContract = new HospitalRequestContract ();
         requestFactory= new HospitalRequestFactoryContract (address ( requestContract ),address( hospitalAddress), maxdonors);
+         entry = new EntryPoint( address(requestFactory));
+            hrc =  new HRC(address( entry), address( requestContract));
+               ai = new AiAgent(address(hrc), address(verification),address(agentFactory ) );
        
        
       
