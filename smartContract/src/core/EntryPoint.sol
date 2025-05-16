@@ -98,7 +98,7 @@ HospitalRequestFactoryContract public requestFactory;
         UserInfo memory user = UserInfo(_name, _email, _location, _contact, _about, _witnessHash,  msg.sender);
         _uId = keccak256(abi.encode(user));
         isUser[msg.sender] = true;
-        registeredUser[_uId] = user;
+        registeredUser[msg.sender] = user;
 
         emit UserRegistered(msg.sender, _name, _email, _location, _contact, _about, _witnessHash,  _uId);
         return _uId;
@@ -121,12 +121,17 @@ HospitalRequestFactoryContract public requestFactory;
         HospitalInfo memory hospital = HospitalInfo(_name, _email, _location, _contact, _about, _witnessHash,_ha, requestaddress);
         _hID = keccak256(abi.encode(hospital));
         isHospital[_ha] = true;
-        registeredHospital[_hID] = hospital;
+        registeredHospital[_ha] = hospital;
         //hospital address to their request addres to get all
         hospitalAddressTorequestAddress[_hID]= requestaddress;
-
+        hospitalList.push(hospital);
         emit HospitalRegistered(_ha, _hID);
         return _hID;
+    }
+
+
+    function getHospitalList() public view returns (HospitalInfo[] memory) {
+        return hospitalList;
     }
 
    
@@ -144,18 +149,18 @@ HospitalRequestFactoryContract public requestFactory;
 
     function deregisterUser(bytes32 _uID) public {
         require(isUser[msg.sender], "Not registered as user");
-        delete registeredUser[_uID];
+        delete registeredUser[msg.sender];
         isUser[msg.sender] = false;
         emit UserDeregistered(msg.sender, _uID);
     }
 
     event HospitalDeregistered(address indexed _hospital, bytes32 indexed hId);
 
-    function deregisterHospital(bytes32 _hID, address add) public {
-        require(isHospital[add], "Not registered as hospital");
-        delete registeredHospital[_hID];
-        isHospital[add] = false;
-        emit HospitalDeregistered(add, _hID);
+    function deregisterHospital() public {
+        require(isHospital[msg.sender], "Not registered as hospital");
+        delete registeredHospital[msg.sender];
+        isHospital[msg.sender] = false;
+      //   emit HospitalDeregistered(msg.sender, "");
     }
 
     event DonorUpdated(
@@ -224,7 +229,7 @@ HospitalRequestFactoryContract public requestFactory;
         
         address add__
     ) public {
-        UserInfo storage user = registeredUser[_uID];
+        UserInfo storage user = registeredUser[msg.sender];
         user.name = _name;
         user.email = _email;
         user.location = _location;
@@ -246,7 +251,7 @@ HospitalRequestFactoryContract public requestFactory;
         string memory _about,
         uint256 _contact
     ) public {
-        HospitalInfo storage hospital = registeredHospital[_hID];
+        HospitalInfo storage hospital = registeredHospital[msg.sender];
         hospital.name = _name;
         hospital.email = _email;
         hospital.location = _location;
@@ -265,16 +270,16 @@ HospitalRequestFactoryContract public requestFactory;
     //     return (registeredDonor[msg.sender][_id][true], registeredUser[msg.sender][_id]);
     // } //@audit change seperate 
     
-    function getUserInfo(bytes32 _id) public view returns(UserInfo memory){
-        return registeredUser[_id];
+    function getUserInfo() public view returns(UserInfo memory){
+        return registeredUser[msg.sender];
     }
 
     function getDonorInfo(bytes32 _id) public view returns(DonorInfo memory){
          return  donors[_id];
     }
 
-    function gethospitalinfo( bytes32 _hID) public view returns (HospitalInfo memory) {
-        return registeredHospital[_hID];
+    function gethospitalinfo(address _owner) public view returns (HospitalInfo memory) {
+        return registeredHospital[_owner];
     }
     function getHospitalToRequest(bytes32 _hId) public view returns(address ){
      return   hospitalAddressTorequestAddress[_hId];
@@ -282,4 +287,5 @@ HospitalRequestFactoryContract public requestFactory;
     function getRequestAddress() public view returns(address[] memory){
         return hospitalRequests;
     }
+
 }

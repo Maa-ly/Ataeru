@@ -19,15 +19,17 @@ contract HealthDataNFT is ERC721, Ownable {
         string space;
     }
 
-    constructor(address _process) ERC721("HealthDataNFT", "HDNFT") Ownable(msg.sender) {
-        process =Process( _process);
+    constructor(
+        address _process
+    ) ERC721("HealthDataNFT", "HDNFT") Ownable(msg.sender) {
+        process = Process(_process);
     }
 
     modifier onlyProcess() {
-        if(msg.sender != address(process)) {
+        if (msg.sender != address(process)) {
             revert("HealthDataNFT__Not Authorized");
         }
-        
+
         _;
     }
 
@@ -48,13 +50,12 @@ contract HealthDataNFT is ERC721, Ownable {
     function mint(
         address recipient,
         string memory _uri
-    ) public onlyProcess returns (uint256) {
+    ) public returns (uint256) {
         uint256 newId = _tokenIds;
         _tokenIds++;
 
         _mint(recipient, newId);
         _setTokenURI(newId, _uri);
-
         return newId;
     }
 

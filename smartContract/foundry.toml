@@ -14,8 +14,9 @@ remappings=[
 
 [rpc_endpoints]
 localchain = "${LOCALCHAIN_URL}"
+basechain = "${BASE_URL}"
 
 [etherscan]
-sidechain = { key = "${SIDECHAIN_KEY}" } 
+# sidechain = { key = "${SIDECHAIN_KEY}" } 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
